@@ -6,7 +6,7 @@ add a mapping on the main user modes instead for a quicker onboarding.
 Commands are listed below, along with the user-mode and keybinding they are available from.
 
 | Command                         | User mode              | Default mappings           | Notes                                                            |
-| =======                         | =========              | ================           | ====                                                             |
+| -------                         | ---------              | ----------------           | ----                                                             |
 | `kak-notes-journal-open-daily`  | `kak-notes`            | `<J>`                      | Open the daily journal, which is the same file for the same day. |
 | `kak-notes-journal-open`        | `kak-notes`            | `<j>`                      | Open a journal via a _prompt_.                                   |
 | `kak-notes-open`                | `kak-notes`            | `<n>`                      | Open a notes via a _prompt_.                                     |
@@ -35,7 +35,7 @@ The plugin inserts two highlighters in the `shared` scope:
 Options:
 
 | Option                   |  Default   | Notes                                     |
-| ======                   |  =======   | =====                                     |
+| ------                   |  -------   | -----                                     |
 | `kak_notes_root_dir`     |            | Root directory where to hold all notes.   |
 | `kak_notes_dir`          |            | Notes directory.                          |
 | `kak_notes_archives_dir` |            | Archives directory.                       |
