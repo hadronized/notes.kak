@@ -55,14 +55,10 @@ define-command kak-notes-open -docstring 'open note' %{
   }
 }
 
-define-command kak-notes-new-note -shell-script-candidates "$kak_opt_kak_notes_find_dir $kak_opt_kak_notes_dir" -params 0..1 -docstring 'new note' %{
+define-command kak-notes-new-note -docstring 'new note' %{
   prompt note: %{
     edit %sh{
-      if [ -z "$1" ]; then
-        echo "$kak_opt_kak_notes_dir/${kak_text%.md}.md"
-      else
-        echo "$1/${kak_text%.md}.md"
-      fi
+      echo "$kak_opt_kak_notes_dir/${kak_text%.md}.md"
     }
   }
 }
@@ -180,7 +176,7 @@ map global kak-notes / ':kak-notes-search<ret>'                     -docstring '
 map global kak-notes A ':kak-notes-archive-note<ret>'               -docstring 'archive note'
 map global kak-notes C ':kak-notes-capture<ret>'                    -docstring 'capture'
 map global kak-notes J ':kak-notes-journal-open-daily<ret>'         -docstring 'open daily'
-map global kak-notes N ':kak-notes-new-note '                       -docstring 'new note'
+map global kak-notes N ':kak-notes-new-note<ret>'                   -docstring 'new note'
 map global kak-notes S ':kak-notes-sync<ret>'                       -docstring 'synchronize notes'
 map global kak-notes a ':kak-notes-archive-open<ret>'               -docstring 'open archived note'
 map global kak-notes c ':kak-notes-open-capture<ret>'               -docstring 'open capture'
