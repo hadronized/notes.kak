@@ -9,6 +9,7 @@ declare-option str kak_notes_sym_todo 'TODO'
 declare-option str kak_notes_sym_wip 'WIP'
 declare-option str kak_notes_sym_done 'DONE'
 declare-option str kak_notes_sym_wontdo 'WONTDO'
+declare-option str kak_notes_sym_idea 'IDEA'
 declare-option str kak_notes_find 'fd -t file .md'
 declare-option str kak_notes_find_dir 'fd -t directory .'
 declare-option -hidden str kak_notes_tasks_list_current_line
@@ -23,6 +24,7 @@ set-face global kak_notes_done black
 set-face global kak_notes_done_text black
 set-face global kak_notes_wontdo black
 set-face global kak_notes_wontdo_text black+s
+set-face global kak_notes_idea blue
 set-face global kak_notes_issue cyan+u
 set-face global kak_notes_task_list_delimiter black
 set-face global kak_notes_task_list_path blue
@@ -115,7 +117,7 @@ define-command kak-notes-tasks-list-by-regex -params 1 -docstring 'list tasks by
 }
 
 define-command kak-notes-tasks-list-all -docstring 'list all tasks' %{
-  kak-notes-tasks-list-by-regex "%opt{kak_notes_sym_todo}\|%opt{kak_notes_sym_wip}\|%opt{kak_notes_sym_done}\|%opt{kak_notes_sym_wontdo}"
+  kak-notes-tasks-list-by-regex "%opt{kak_notes_sym_todo}\|%opt{kak_notes_sym_wip}\|%opt{kak_notes_sym_done}\|%opt{kak_notes_sym_wontdo}|%opt{kak_notes_sym_idea}"
 }
 
 # Command executed when pressing <ret> in a *kak-notes-tasks-list* buffer.
@@ -160,6 +162,8 @@ add-highlighter shared/kak-notes-tasks/done regex "-\s*(%opt{kak_notes_sym_done}
   1:kak_notes_done 2:kak_notes_done_text
 add-highlighter shared/kak-notes-tasks/wontdo regex "-\s*(%opt{kak_notes_sym_wontdo})\s*([^\n]*)"\
   1:kak_notes_wontdo 2:kak_notes_wontdo_text
+add-highlighter shared/kak-notes-tasks/idea regex "-\s*(%opt{kak_notes_sym_idea})\s*[^\n]*"\
+  1:kak_notes_idea
 add-highlighter shared/kak-notes-tasks/issue regex " (#[0-9]+)"\
   1:kak_notes_issue
 add-highlighter shared/kak-notes-tasks/subtask-uncheck regex "-\s* (\[ \])[^\n]*"\
@@ -187,6 +191,7 @@ map global kak-notes t ':enter-user-mode kak-notes-tasks<ret>'      -docstring '
 
 map global kak-notes-tasks-list a ":kak-notes-tasks-list-all<ret>"                                 -docstring 'list all tasks'
 map global kak-notes-tasks-list d ":kak-notes-tasks-list-by-regex %opt{kak_notes_sym_done}<ret>"   -docstring 'list done tasks'
+map global kak-notes-tasks-list i ":kak-notes-tasks-list-by-regex %opt{kak_notes_sym_idea}<ret>"   -docstring 'list ideas'
 map global kak-notes-tasks-list l ":kak-notes-tasks-list-by-regex '\ :[^:]+:'<ret>"                -docstring 'list tasks by labels'
 map global kak-notes-tasks-list n ":kak-notes-tasks-list-by-regex %opt{kak_notes_sym_wontdo}<ret>" -docstring 'list wontdo tasks'
 map global kak-notes-tasks-list t ":kak-notes-tasks-list-by-regex %opt{kak_notes_sym_todo}<ret>"   -docstring 'list todo tasks'
@@ -201,9 +206,10 @@ hook -group kak-notes-tasks global WinCreate \*kak-notes-tasks-list\* %{
 hook -group kak-notes-tasks global WinCreate .*\.md %{
   add-highlighter window/ ref kak-notes-tasks
 
-  map window kak-notes-tasks d ":kak-notes-task-switch-status %opt{kak_notes_sym_done}<ret>"      -docstring 'switch task to done'
-  map window kak-notes-tasks i ":kak-notes-task-gh-open-issue<ret>"                               -docstring 'open GitHub issue'
-  map window kak-notes-tasks n ":kak-notes-task-switch-status %opt{kak_notes_sym_wontdo}<ret>"    -docstring 'switch task to wontdo'
-  map window kak-notes-tasks t ":kak-notes-task-switch-status %opt{kak_notes_sym_todo}<ret>"      -docstring 'switch task to todo'
-  map window kak-notes-tasks w ":kak-notes-task-switch-status %opt{kak_notes_sym_wip}<ret>"       -docstring 'switch task to wip'
+  map window kak-notes-tasks d ":kak-notes-task-switch-status %opt{kak_notes_sym_done}<ret>"   -docstring 'switch task to done'
+  map window kak-notes-tasks i ":kak-notes-task-gh-open-issue<ret>"                            -docstring 'open GitHub issue'
+  map window kak-notes-tasks i ":kak-notes-task-switch-status %opt{kak_notes_sym_idea}<ret>"   -docstring 'switch task to idea'
+  map window kak-notes-tasks n ":kak-notes-task-switch-status %opt{kak_notes_sym_wontdo}<ret>" -docstring 'switch task to wontdo'
+  map window kak-notes-tasks t ":kak-notes-task-switch-status %opt{kak_notes_sym_todo}<ret>"   -docstring 'switch task to todo'
+  map window kak-notes-tasks w ":kak-notes-task-switch-status %opt{kak_notes_sym_wip}<ret>"    -docstring 'switch task to wip'
 }
