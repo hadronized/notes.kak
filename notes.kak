@@ -206,8 +206,8 @@ hook -group kak-notes-tasks global WinCreate \*kak-notes-tasks-list\* %{
 hook -group kak-notes-tasks global WinCreate .*\.md %{
   add-highlighter window/ ref kak-notes-tasks
 
+  map window kak-notes-tasks <ret> ":kak-notes-task-gh-open-issue<ret>"                        -docstring 'open GitHub issue'
   map window kak-notes-tasks d ":kak-notes-task-switch-status %opt{kak_notes_sym_done}<ret>"   -docstring 'switch task to done'
-  map window kak-notes-tasks i ":kak-notes-task-gh-open-issue<ret>"                            -docstring 'open GitHub issue'
   map window kak-notes-tasks i ":kak-notes-task-switch-status %opt{kak_notes_sym_idea}<ret>"   -docstring 'switch task to idea'
   map window kak-notes-tasks n ":kak-notes-task-switch-status %opt{kak_notes_sym_wontdo}<ret>" -docstring 'switch task to wontdo'
   map window kak-notes-tasks t ":kak-notes-task-switch-status %opt{kak_notes_sym_todo}<ret>"   -docstring 'switch task to todo'
