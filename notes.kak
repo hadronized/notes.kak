@@ -128,14 +128,15 @@ define-command -hidden kak-notes-tasks-list-open %{
   execute-keys -with-hooks -save-regs 'flc' 'giT:"fyllT:"lyllT:"cy:edit "%reg{f}" %reg{l} %reg{c}<ret>'
 }
 
+# Run a grepper with the provided arguments as search query.
+define-command kak-notes-grepcmd -params 2 %{
+  # Initial implementation based on rg <pattern> <path>.
+  execute-keys ":grep %arg{2} %arg{1}<ret>"
+}
+
 define-command kak-notes-search -docstring 'search notes' %{
   prompt 'search notes:' %{
-    prompt refine: -menu -shell-script-candidates "rg -in --column '%val{text}' $kak_opt_kak_notes_root_dir" %{
-      evaluate-commands "edit -existing %sh{
-        IFS=':' read -r file line column rest <<< ""$kak_text""
-        echo \""$file\"" $line $column
-      }"
-    }
+    kak-notes-grepcmd %opt{kak_notes_root_dir} %val{text}
   }
 }
 
