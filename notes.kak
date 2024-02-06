@@ -97,7 +97,7 @@ define-command kak-notes-open-capture -docstring 'open capture' %{
 }
 
 define-command kak-notes-task-switch-status -params 1 -docstring 'switch task' %{
-  execute-keys -draft "gilec%arg{1}"
+  execute-keys -with-hooks -draft "gilec%arg{1}<esc>o<backspace><backspace>  > %arg{1} on %sh{date '+%a %d %b %Y, %H:%M:%S'}<esc>"
 }
 
 define-command kak-notes-task-gh-open-issue -docstring 'open GitHub issue' %{
