@@ -25,7 +25,7 @@ set-face global kak_notes_done black
 set-face global kak_notes_done_text black
 set-face global kak_notes_wontdo black
 set-face global kak_notes_wontdo_text black+s
-set-face global kak_notes_idea blue
+set-face global kak_notes_idea green
 set-face global kak_notes_question cyan
 set-face global kak_notes_issue cyan+u
 set-face global kak_notes_task_list_delimiter black
@@ -97,7 +97,7 @@ define-command kak-notes-open-capture -docstring 'open capture' %{
 }
 
 define-command kak-notes-task-switch-status -params 1 -docstring 'switch task' %{
-  execute-keys -with-hooks -draft "gilec%arg{1}<esc>o<backspace><backspace>  > %arg{1} on %sh{date '+%a %d %b %Y, %H:%M:%S'}<esc>"
+  execute-keys -with-hooks -draft "giee_c%arg{1}<esc>o> %sh{tr '[:upper:]' '[:lower:]' <<< $1} on %sh{date '+%a %d %b %Y, %H:%M:%S'}<esc>"
 }
 
 define-command kak-notes-task-gh-open-issue -docstring 'open GitHub issue' %{
@@ -119,7 +119,7 @@ define-command kak-notes-tasks-list-by-regex -params 1 -docstring 'list tasks by
 }
 
 define-command kak-notes-tasks-list-all -docstring 'list all tasks' %{
-  kak-notes-tasks-list-by-regex "- %opt{kak_notes_sym_todo}\|- %opt{kak_notes_sym_wip}\|- %opt{kak_notes_sym_done}\|- %opt{kak_notes_sym_wontdo}\|- %opt{kak_notes_sym_idea}\|- %opt{kak_notes_sym_question}"
+  kak-notes-tasks-list-by-regex "%opt{kak_notes_sym_todo}\|%opt{kak_notes_sym_wip}\|%opt{kak_notes_sym_done}\|%opt{kak_notes_sym_wontdo}\|%opt{kak_notes_sym_idea}\|%opt{kak_notes_sym_question}"
 }
 
 # Command executed when pressing <ret> in a *kak-notes-tasks-list* buffer.
@@ -157,22 +157,14 @@ define-command kak-notes-sync -docstring 'synchronize notes' %{
 }
 
 add-highlighter shared/kak-notes-tasks group
-add-highlighter shared/kak-notes-tasks/todo regex "-\s*(%opt{kak_notes_sym_todo})\s*[^\n]*"\
-  1:kak_notes_todo
-add-highlighter shared/kak-notes-tasks/wip regex "-\s*(%opt{kak_notes_sym_wip})\s*[^\n]*"\
-  1:kak_notes_wip
-add-highlighter shared/kak-notes-tasks/done regex "-\s*(%opt{kak_notes_sym_done})\s*([^\n]*)"\
-  1:kak_notes_done 2:kak_notes_done_text
-add-highlighter shared/kak-notes-tasks/wontdo regex "-\s*(%opt{kak_notes_sym_wontdo})\s*([^\n]*)"\
-  1:kak_notes_wontdo 2:kak_notes_wontdo_text
-add-highlighter shared/kak-notes-tasks/idea regex "-\s*(%opt{kak_notes_sym_idea})\s*[^\n]*"\
-  1:kak_notes_idea
-add-highlighter shared/kak-notes-tasks/question regex "-\s*(%opt{kak_notes_sym_question})\s*[^\n]*"\
-  1:kak_notes_question
-add-highlighter shared/kak-notes-tasks/issue regex " (#[0-9]+)"\
-  1:kak_notes_issue
-add-highlighter shared/kak-notes-tasks/subtask-uncheck regex "-\s* (\[ \])[^\n]*"\
-  1:kak_notes_subtask_uncheck
+add-highlighter shared/kak-notes-tasks/todo regex "(%opt{kak_notes_sym_todo})"         0:kak_notes_todo
+add-highlighter shared/kak-notes-tasks/wip regex "(%opt{kak_notes_sym_wip})"           0:kak_notes_wip
+add-highlighter shared/kak-notes-tasks/done regex "(%opt{kak_notes_sym_done})"         0:kak_notes_done
+add-highlighter shared/kak-notes-tasks/wontdo regex "(%opt{kak_notes_sym_wontdo})"     0:kak_notes_wontdo
+add-highlighter shared/kak-notes-tasks/idea regex "(%opt{kak_notes_sym_idea})"         0:kak_notes_idea
+add-highlighter shared/kak-notes-tasks/question regex "(%opt{kak_notes_sym_question})" 0:kak_notes_question
+add-highlighter shared/kak-notes-tasks/issue regex " (#[0-9]+)"                        0:kak_notes_issue
+add-highlighter shared/kak-notes-tasks/subtask-uncheck regex "-\s* (\[ \])[^\n]*"      0:kak_notes_subtask_uncheck
 add-highlighter shared/kak-notes-tasks/subtask-check regex "-\s* (\[x\])\s*([^\n]*)"\
   1:kak_notes_subtask_check 2:kak_notes_subtask_text_check
 add-highlighter shared/kak-notes-tasks/tag regex " (:[^:]+:)" 0:kak_notes_tag
@@ -194,14 +186,14 @@ map global kak-notes l ':enter-user-mode kak-notes-tasks-list<ret>' -docstring '
 map global kak-notes n ':kak-notes-open<ret>'                       -docstring 'open note'
 map global kak-notes t ':enter-user-mode kak-notes-tasks<ret>'      -docstring 'tasks'
 
-map global kak-notes-tasks-list a ":kak-notes-tasks-list-all<ret>"                                        -docstring 'list all tasks'
-map global kak-notes-tasks-list d ":kak-notes-tasks-list-by-regex '- %opt{kak_notes_sym_done}'<ret>"     -docstring 'list done tasks'
-map global kak-notes-tasks-list i ":kak-notes-tasks-list-by-regex '- %opt{kak_notes_sym_idea}'<ret>"     -docstring 'list ideas'
-map global kak-notes-tasks-list l ":kak-notes-tasks-list-by-regex '\ :[^:]+:'<ret>"                       -docstring 'list tasks by labels'
-map global kak-notes-tasks-list n ":kak-notes-tasks-list-by-regex '- %opt{kak_notes_sym_wontdo}'<ret>"   -docstring 'list wontdo tasks'
-map global kak-notes-tasks-list q ":kak-notes-tasks-list-by-regex '- %opt{kak_notes_sym_question}'<ret>" -docstring 'list questions'
-map global kak-notes-tasks-list t ":kak-notes-tasks-list-by-regex '- %opt{kak_notes_sym_todo}'<ret>"     -docstring 'list todo tasks'
-map global kak-notes-tasks-list w ":kak-notes-tasks-list-by-regex '- %opt{kak_notes_sym_wip}'<ret>"      -docstring 'list wip tasks'
+map global kak-notes-tasks-list a ":kak-notes-tasks-list-all<ret>"                                   -docstring 'list all tasks'
+map global kak-notes-tasks-list d ":kak-notes-tasks-list-by-regex %opt{kak_notes_sym_done}<ret>"     -docstring 'list done tasks'
+map global kak-notes-tasks-list i ":kak-notes-tasks-list-by-regex %opt{kak_notes_sym_idea}<ret>"     -docstring 'list ideas'
+map global kak-notes-tasks-list l ":kak-notes-tasks-list-by-regex '\ :[^:]+:'<ret>"                  -docstring 'list tasks by labels'
+map global kak-notes-tasks-list n ":kak-notes-tasks-list-by-regex %opt{kak_notes_sym_wontdo}<ret>"   -docstring 'list wontdo tasks'
+map global kak-notes-tasks-list q ":kak-notes-tasks-list-by-regex %opt{kak_notes_sym_question}<ret>" -docstring 'list questions'
+map global kak-notes-tasks-list t ":kak-notes-tasks-list-by-regex %opt{kak_notes_sym_todo}<ret>"     -docstring 'list todo tasks'
+map global kak-notes-tasks-list w ":kak-notes-tasks-list-by-regex %opt{kak_notes_sym_wip}<ret>"      -docstring 'list wip tasks'
 
 hook -group kak-notes-tasks global WinCreate \*kak-notes-tasks-list\* %{
   map buffer normal '<ret>' ':kak-notes-tasks-list-open<ret>'
