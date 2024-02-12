@@ -99,7 +99,7 @@ define-command kak-notes-open-capture -docstring 'open capture' %{
 }
 
 define-command kak-notes-task-switch-status -params 1 -docstring 'switch task' %{
-  execute-keys -with-hooks -draft "giee_c%arg{1}<esc>o> %sh{tr '[:upper:]' '[:lower:]' <<< $1} on %sh{date '+%a %d %b %Y, %H:%M:%S'}<esc>"
+  execute-keys -draft "gif<space>e_c%arg{1}<esc>o> %sh{tr '[:upper:]' '[:lower:]' <<< $1} on %sh{date '+%a %d %b %Y, %H:%M:%S'}<esc>"
 }
 
 define-command kak-notes-task-gh-open-issue -docstring 'open GitHub issue' %{
