@@ -159,15 +159,15 @@ define-command kak-notes-sync -docstring 'synchronize notes' %{
 }
 
 add-highlighter shared/kak-notes-tasks group
-add-highlighter shared/kak-notes-tasks/todo regex "(%opt{kak_notes_sym_todo})"         0:kak_notes_todo
-add-highlighter shared/kak-notes-tasks/wip regex "(%opt{kak_notes_sym_wip})"           0:kak_notes_wip
-add-highlighter shared/kak-notes-tasks/done regex "(%opt{kak_notes_sym_done})"         0:kak_notes_done
-add-highlighter shared/kak-notes-tasks/wontdo regex "(%opt{kak_notes_sym_wontdo})"     0:kak_notes_wontdo
-add-highlighter shared/kak-notes-tasks/idea regex "(%opt{kak_notes_sym_idea})"         0:kak_notes_idea
-add-highlighter shared/kak-notes-tasks/question regex "(%opt{kak_notes_sym_question})" 0:kak_notes_question
-add-highlighter shared/kak-notes-tasks/hold regex "(%opt{kak_notes_sym_hold})"         0:kak_notes_hold
-add-highlighter shared/kak-notes-tasks/issue regex " (#[0-9]+)"                        0:kak_notes_issue
-add-highlighter shared/kak-notes-tasks/subtask-uncheck regex "-\s* (\[ \])[^\n]*"      0:kak_notes_subtask_uncheck
+add-highlighter shared/kak-notes-tasks/todo regex "(%opt{kak_notes_sym_todo})"         1:kak_notes_todo
+add-highlighter shared/kak-notes-tasks/wip regex "(%opt{kak_notes_sym_wip})"           1:kak_notes_wip
+add-highlighter shared/kak-notes-tasks/done regex "(%opt{kak_notes_sym_done})"         1:kak_notes_done
+add-highlighter shared/kak-notes-tasks/wontdo regex "(%opt{kak_notes_sym_wontdo})"     1:kak_notes_wontdo
+add-highlighter shared/kak-notes-tasks/idea regex "(%opt{kak_notes_sym_idea})"         1:kak_notes_idea
+add-highlighter shared/kak-notes-tasks/question regex "(%opt{kak_notes_sym_question})" 1:kak_notes_question
+add-highlighter shared/kak-notes-tasks/hold regex "(%opt{kak_notes_sym_hold})"         1:kak_notes_hold
+add-highlighter shared/kak-notes-tasks/issue regex " (#[0-9]+)"                        1:kak_notes_issue
+add-highlighter shared/kak-notes-tasks/subtask-uncheck regex "-\s* (\[ \])[^\n]*"      1:kak_notes_subtask_uncheck
 add-highlighter shared/kak-notes-tasks/subtask-check regex "-\s* (\[x\])\s*([^\n]*)"\
   1:kak_notes_subtask_check 2:kak_notes_subtask_text_check
 add-highlighter shared/kak-notes-tasks/tag regex " (:[^:]+:)" 0:kak_notes_tag
