@@ -57,7 +57,7 @@ define-command notes-journal-open-rel -params -1 %{
   }
 
   edit -existing "%opt{notes_journal_dir}/%sh{ date -d ""$kak_opt_notes_journal_now $1"" ""+%Y/%b/%a %d"" }.md"
-  set-option buffer notes_journal_now %sh{ date -d """$kak_opt_notes_journal_now"" ""$1""" }
+  set-option buffer notes_journal_now %sh{ date -d """$kak_opt_notes_journal_now $1""" }
 }
 
 define-command notes-open -docstring 'open note' %{
