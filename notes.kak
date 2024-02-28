@@ -15,10 +15,13 @@ declare-option str notes_sym_hold 'HOLD'
 declare-option str notes_find 'fd -t file .md'
 declare-option str notes_find_dir 'fd -t directory .'
 declare-option -hidden str notes_tasks_list_current_line
+declare-option -hidden str notes_journal_now
 
 declare-user-mode notes
 declare-user-mode notes-tasks
 declare-user-mode notes-tasks-list
+declare-user-mode notes-journal-nav
+declare-user-mode notes-journal-nav-last
 
 set-face global notes_todo green
 set-face global notes_wip magenta
@@ -39,18 +42,22 @@ set-face global notes_subtask_check black
 set-face global notes_subtask_text_check black
 set-face global notes_tag green
 
-define-command notes-journal-open-daily -docstring 'open daily journal' %{
+define-command notes-journal-open -docstring 'open daily journal' %{
   nop %sh{
     mkdir -p "$kak_opt_notes_journal_dir/$(date +%Y/%b)"
   }
 
   edit "%opt{notes_journal_dir}/%sh{ date '+%Y/%b/%a %d' }.md"
+  set-option buffer notes_journal_now %sh{ date }
 }
 
-define-command notes-journal-open -docstring 'open journal' %{
-  prompt -menu -shell-script-candidates "$kak_opt_notes_find $kak_opt_notes_journal_dir" 'open journal:' %{
-    edit "%val{text}"
+define-command notes-journal-open-rel -params -1 %{
+  nop %sh{
+    mkdir -p "$kak_opt_notes_journal_dir/$(date -d ""$kak_opt_notes_journal_now $1"" +%Y/%b)"
   }
+
+  edit -existing "%opt{notes_journal_dir}/%sh{ date -d ""$kak_opt_notes_journal_now $1"" ""+%Y/%b/%a %d"" }.md"
+  set-option buffer notes_journal_now %sh{ date -d """$kak_opt_notes_journal_now"" ""$1""" }
 }
 
 define-command notes-open -docstring 'open note' %{
@@ -176,18 +183,34 @@ add-highlighter shared/notes-tasks-list group
 add-highlighter shared/notes-tasks-list/path regex "^((?:\w:)?[^:\n]+):(\d+):(\d+)?" 1:cyan 2:green 3:green
 add-highlighter shared/notes-tasks-list/current-line line %{%opt{notes_tasks_list_current_line}} default+b
 
-map global notes A ':notes-archive-note<ret>'               -docstring 'archive note'
-map global notes a ':notes-archive-open<ret>'               -docstring 'open archived note'
-map global notes C ':notes-capture<ret>'                    -docstring 'capture'
-map global notes c ':notes-open-capture<ret>'               -docstring 'open capture'
-map global notes J ':notes-journal-open-daily<ret>'         -docstring 'open daily'
-map global notes j ':notes-journal-open<ret>'               -docstring 'open past journal'
-map global notes l ':enter-user-mode notes-tasks-list<ret>' -docstring 'tasks list'
-map global notes N ':notes-new-note<ret>'                   -docstring 'new note'
-map global notes n ':notes-open<ret>'                       -docstring 'open note'
-map global notes / ':notes-search<ret>'                     -docstring 'search in notes'
-map global notes S ':notes-sync<ret>'                       -docstring 'synchronize notes'
-map global notes t ':enter-user-mode notes-tasks<ret>'      -docstring 'tasks'
+map global notes A ':notes-archive-note<ret>'                -docstring 'archive note'
+map global notes a ':notes-archive-open<ret>'                -docstring 'open archived note'
+map global notes C ':notes-capture<ret>'                     -docstring 'capture'
+map global notes c ':notes-open-capture<ret>'                -docstring 'open capture'
+map global notes j ':notes-journal-open<ret>'                -docstring 'open journal'
+map global notes J ':enter-user-mode notes-journal-nav<ret>' -docstring 'navigate journals'
+map global notes l ':enter-user-mode notes-tasks-list<ret>'  -docstring 'tasks list'
+map global notes N ':notes-new-note<ret>'                    -docstring 'new note'
+map global notes n ':notes-open<ret>'                        -docstring 'open note'
+map global notes / ':notes-search<ret>'                      -docstring 'search in notes'
+map global notes S ':notes-sync<ret>'                        -docstring 'synchronize notes'
+map global notes t ':enter-user-mode notes-tasks<ret>'       -docstring 'tasks'
+
+map global notes-journal-nav l ':enter-user-mode notes-journal-nav-last<ret>' -docstring 'last…'
+map global notes-journal-nav d ':notes-journal-open-rel "-1 day"<ret>'        -docstring 'day before'
+map global notes-journal-nav D ':notes-journal-open-rel "+1 day"<ret>'        -docstring 'day after'
+map global notes-journal-nav w ':notes-journal-open-rel "-1 week"<ret>'       -docstring 'week before'
+map global notes-journal-nav W ':notes-journal-open-rel "+1 week"<ret>'       -docstring 'week after'
+map global notes-journal-nav m ':notes-journal-open-rel "-1 month"<ret>'      -docstring 'month before'
+map global notes-journal-nav M ':notes-journal-open-rel "+1 month"<ret>'      -docstring 'month after'
+
+map global notes-journal-nav-last m ':notes-journal-open-rel "last monday"<ret>'    -docstring 'monday'
+map global notes-journal-nav-last t ':notes-journal-open-rel "last tuesday"<ret>'   -docstring 'tuesday'
+map global notes-journal-nav-last w ':notes-journal-open-rel "last wednesday"<ret>' -docstring 'wednesday'
+map global notes-journal-nav-last h ':notes-journal-open-rel "last thursday"<ret>'  -docstring 'thursday'
+map global notes-journal-nav-last f ':notes-journal-open-rel "last friday"<ret>'    -docstring 'friday'
+map global notes-journal-nav-last T ':notes-journal-open-rel "last saturday"<ret>'  -docstring 'saturday'
+map global notes-journal-nav-last S ':notes-journal-open-rel "last sunday"<ret>'    -docstring 'sunday'
 
 map global notes-tasks-list a ":notes-tasks-list-all<ret>"                               -docstring 'list all tasks'
 map global notes-tasks-list d ":notes-tasks-list-by-regex %opt{notes_sym_done}<ret>"     -docstring 'list done tasks'
